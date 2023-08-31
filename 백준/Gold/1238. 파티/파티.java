@@ -1,101 +1,87 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.PriorityQueue;
-import java.util.StringTokenizer;
- 
-class Town implements Comparable<Town> {
-    int end;
-    int weight;
- 
-    Town(int end, int weight) {
-        this.end = end;
-        this.weight = weight;
-    }
- 
-    @Override
-    public int compareTo(Town arg0) {
-        return weight - arg0.weight;
-    }
+import java.util.Scanner;
+
+/*1238번. 파티 - 다익스트라 문풀 */
+class Edge implements Comparable<Edge>{
+	int e, val;
+	Edge(int e, int val){
+		this.e =e;
+		this.val =val;
+	}
+	@Override
+	public int compareTo(Edge o) {
+		// TODO Auto-generated method stub
+		return this.val - o.val;
+	}
 }
- 
 public class Main {
-    static final int INF = 987654321;
-    static ArrayList<ArrayList<Town>> arrList, reverse_arrList;
-    static int N, X;
- 
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st = new StringTokenizer(br.readLine());
- 
-        N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-        X = Integer.parseInt(st.nextToken());
- 
-        arrList = new ArrayList<>(); // 문제의 입력을 그대로 받은 배열
-        reverse_arrList = new ArrayList<>(); // 문제의 입력을 반대로 받은 배열
- 
-        for (int i = 0; i <= N; i++) {
-            arrList.add(new ArrayList<>());
-            reverse_arrList.add(new ArrayList<>());
-        }
- 
-        // arrList와 reverse_arrList를 각각 단방향 인접리스트로 구현
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
- 
-            arrList.get(start).add(new Town(end, weight));
-            reverse_arrList.get(end).add(new Town(start, weight));
-        }
- 
-        int[] dist1 = dijkstra(arrList); // X에서 시작점들 사이의 최단거리
-        int[] dist2 = dijkstra(reverse_arrList); // 시작점들에서 X 사이의 최단거리
- 
-        int ans = 0;
-        for (int i = 1; i <= N; i++) {
-            ans = Math.max(ans, dist1[i] + dist2[i]);
-        }
- 
-        bw.write(ans + "\n");
-        bw.flush();
-        bw.close();
-        br.close();
-    }
-    
-    // 다익스트라 알고리즘
-    public static int[] dijkstra(ArrayList<ArrayList<Town>> a) {
-        PriorityQueue<Town> pq = new PriorityQueue<>();
-        pq.offer(new Town(X, 0));
-        
-        boolean[] check = new boolean[N + 1];
-        int[] dist = new int[N + 1];
-        Arrays.fill(dist, INF);
-        dist[X] = 0;
- 
-        while (!pq.isEmpty()) {
-            Town curTown = pq.poll();
-            int cur = curTown.end;
- 
-            if (!check[cur]) {
-                check[cur] = true;
- 
-                for (Town town : a.get(cur)) {
-                    if (!check[town.end] && dist[town.end] > dist[cur] + town.weight) {
-                        dist[town.end] = dist[cur] + town.weight;
-                        pq.add(new Town(town.end, dist[town.end]));
-                    }
-                }
-            }
-        }
-        return dist;
-    }
- 
+	static int N, M, X;
+	static int[] dist1;//가는 길
+	static int[] dist2;//돌아오는 길 
+	static ArrayList<ArrayList<Edge>> A;//정방향 
+	static ArrayList<ArrayList<Edge>> B;//역방향 
+	
+	//다익스트라 함수 
+	static int[] dijkstra(ArrayList<ArrayList<Edge>> graph) {
+		int[] dist = new int[N+1];	
+		PriorityQueue<Edge> pQ = new PriorityQueue<>();
+		//다익스트라는 무한대 초기화
+		Arrays.fill(dist, Integer.MAX_VALUE);
+		//시작점 초기화
+		dist[X] = 0;
+		pQ.offer(new Edge(X, 0));//X로 향하는 길이 0
+		
+		while(!pQ.isEmpty()) {
+			Edge cur = pQ.poll();
+			int cur_e = cur.e;
+			int cur_val= cur.val;
+			
+			for(Edge nx : graph.get(cur_e)) {
+				if(dist[nx.e] > dist[cur_e] + nx.val) {
+					dist[nx.e] = dist[cur_e] + nx.val;
+					pQ.offer(new Edge(nx.e, dist[nx.e]));
+				}
+			}
+		}
+		return dist;
+	}
+	
+	//실행 메인 
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner kb = new Scanner(System.in);
+		N = kb.nextInt();
+		M = kb.nextInt();
+		X = kb.nextInt();
+		
+		A = new ArrayList<>();
+		B = new ArrayList<>();
+		
+		//공간 생성 
+		for(int i=0; i<=N; i++) {
+			A.add(new ArrayList<>());
+			B.add(new ArrayList<>());
+		}
+		
+		//데이터 입력 받기 
+		for(int i=0; i<M; i++) {
+			int s = kb.nextInt();
+			int e = kb.nextInt();
+			int val =kb.nextInt();
+			//정방 역방 
+			A.get(s).add(new Edge(e, val));
+			B.get(e).add(new Edge(s, val));
+		}
+		
+		dist1 = dijkstra(A);
+		dist2 = dijkstra(B);
+		
+		int max = -1;
+		for(int i=1; i<=N; i++) {
+			max = Math.max(max, dist1[i]+dist2[i]);
+		}
+		
+		System.out.println(max);
+	}
 }
