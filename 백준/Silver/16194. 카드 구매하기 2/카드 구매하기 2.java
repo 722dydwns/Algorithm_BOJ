@@ -17,10 +17,10 @@ public class Main {
 		}
 		//DP 사용
 		for(int i=1; i<=N; i++) {
-			for(int j=1; j<=i; j++) {
+			dy[i] = card[i];
+			for(int j=i-1; j>=1; j--) {
 				dy[i] = Math.min(dy[i], dy[i-j] + card[j]);
 			}
-			
 		}
 		System.out.println(dy[N]);
 	}
