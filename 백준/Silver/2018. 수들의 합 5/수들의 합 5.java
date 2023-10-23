@@ -1,31 +1,39 @@
 import java.util.Scanner;
 
-/* 2018번. 연속된 자연수의 합 구하기 */
+/**
+ * 2018번. 수들의 합 
+ */
 public class Main {
+	static int N;
+	
 	//실행 메인 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Scanner kb = new Scanner(System.in);
-		int N = kb.nextInt();
-		int sum = 1, count = 1; 
 		
-		int st = 1, ed = 1;
+		Scanner kb= new Scanner(System.in);
+		N = kb.nextInt();
+
+		int st = 1;
+		int ed = 1;
+		int cnt = 1;//15만 뽑을 경우 생각
 		
+		int sum = 1;
 		while(ed != N) {
-			if(N == sum ) {
-				count++;
+			if(sum == N) { //같은 경우 
+				cnt++;
 				ed++;
-				sum = sum + ed;
-			}else if(sum < N) {
+				sum += ed;
+			}else if(sum < N) { //작은 경우 
 				ed++;
-				sum = sum+ed;
-			}else if(sum > N) {
-				sum = sum - st;
+				sum += ed;
+			}else if(sum > N) { //큰 경우 
+				sum -= st;
 				st++;
 			}
 		}
 		
-		System.out.println(count);
+		System.out.println(cnt);
+		
 	}
 
 }
