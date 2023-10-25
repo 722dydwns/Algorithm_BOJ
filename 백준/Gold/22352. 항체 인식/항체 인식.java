@@ -1,67 +1,91 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
 
+/**
+ * 22352번. 항체 인식 - DFS, BFS 문풀  
+ * @author MYLG
+ *
+ */
 public class Main {
-	static int[] dx = { 0, 1, 0, -1 };
-	static int[] dy = { 1, 0, -1, 0 };
-	static int N,M;
-
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		M = sc.nextInt();
-		int[][] BeforeBoard = new int[N][M];
-		int[][] AfterBoard = new int[N][M];
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				BeforeBoard[i][j] = sc.nextInt();
-			}
-		}
-
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				AfterBoard[i][j] = sc.nextInt();
-			}
-		}
-
-		Here: for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (BeforeBoard[i][j] != AfterBoard[i][j]) {
-					BFS(new int[] { i, j }, BeforeBoard, AfterBoard[i][j]);
-					break Here;
-				}
-			}
-		}
+	static int N, M;
+	static int[][] Before;
+	static int[][] After;
+	//4방향 상,하,좌,우
+	static int[] dx = {0, 0, 1, -1};
+	static int[] dy = {1, -1 ,0 ,0};
+	
+	//BFS
+	static void BFS(int x, int y) {
+		int changeNum = After[x][y];//현재값으로 모두 바꿔줄 거임 //시작값
+		int targetNum = Before[x][y];//현재값
+		Queue<int[]> Q = new LinkedList<>();
+		Q.offer(new int[] {x, y});
+		Before[x][y] = changeNum;
 		
-		System.out.println(ValidCheck(BeforeBoard,AfterBoard));
-
-	}
-
-	public static void BFS(int[] start, int[][] BeforeBoard, int ChangedNum) {
-		int BeforeNum = BeforeBoard[start[0]][start[1]];
-		Queue<int[]> q = new LinkedList<int[]>();
-		q.add(start);
-		BeforeBoard[start[0]][start[1]] = ChangedNum;
-		while (!q.isEmpty()) {
-			int[] now = q.poll();
-			for (int d = 0; d < 4; d++) {
-				int nx = now[0] + dx[d];
-				int ny = now[1] + dy[d];
-				if (0 <= nx && nx < N && 0 <= ny && ny < M && BeforeBoard[nx][ny] == BeforeNum) {
-					q.add(new int[] {nx,ny});
-					BeforeBoard[nx][ny] = ChangedNum;
+		while(!Q.isEmpty()) {
+			int[] cur = Q.poll();
+			for(int k=0; k<4; k++) {
+				int nx = cur[0] + dx[k];
+				int ny = cur[1] + dy[k];
+				if(nx <0 || ny <0 || nx >= N || ny >= M ) continue;
+				if(Before[nx][ny] == targetNum) {
+					//바꿀 대상 번호는
+					Q.offer(new int[] {nx, ny});
+					Before[nx][ny] = changeNum;//변경
 				}
 			}
 		}
 	}
 	
-	public static String ValidCheck(int[][] BeforeBoard,int[][]AfterBoard) {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if(BeforeBoard[i][j] != AfterBoard[i][j]) {
-					return "NO";
+	static boolean isValid() {
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<M; j++) {
+				if(Before[i][j] != After[i][j]) {
+					return false;
 				}
 			}
 		}
-		return "YES";
+		return true;
+	}
+	
+	
+	//실행 메인 
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner kb= new Scanner(System.in);
+		N = kb.nextInt();
+		M = kb.nextInt();
+		
+		Before = new int[N][M];
+		After = new int[N][M];
+		
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<M; j++) {
+				Before[i][j] = kb.nextInt();
+			}
+		}
+		
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<M; j++) {
+				After[i][j] = kb.nextInt();
+			}
+		}
+		
+		//여기서 이제 Before과 After 지점이 다른 곳을 찾기 
+		Here: for(int i=0; i<N; i++) {
+			for(int j=0; j<M; j++) {
+				if(Before[i][j] != After[i][j]) {
+					BFS(i, j);
+					break Here;
+				}
+			}
+		}
+		
+		if(isValid()) {
+			System.out.println("YES");
+		}else {
+			System.out.println("NO");
+		}		
 	}
 }
