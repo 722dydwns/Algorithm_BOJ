@@ -1,30 +1,29 @@
 import java.util.*;
 
 class Solution {
-    static int answer;
-    static boolean[] visited;
+    static boolean[] visited;//방문 1일 1회니까
+    static int max = Integer.MIN_VALUE;//최소값 초기화
     //DFS
     static void DFS(int lv, int k, int[][] dungeons){
         
         for(int i=0; i<dungeons.length; i++){
-            //방문X && 최소 피로도가 k보다 작거나 같은 곳으로는 더 깊이 탐색 가능
-            if(!visited[i] && k >= dungeons[i][0]){
+            if(!visited[i] && k >= dungeons[i][0]){//방문안했고, 해당 던전 최소 피로도보다 k가 클 경우만 
                 visited[i] = true;
-                //더 깊이 레벨탐색, k-소모피로도 보내면서 점차 깊이
-                DFS(lv+1, k - dungeons[i][1], dungeons);
-                visited[i] = false;//복귀 시 false주기 (다른 뿌리에서도 완탐 해야 함)
+                DFS(lv+1, k-dungeons[i][1], dungeons);
+                visited[i] = false;
             }
         }
         
-        answer = Math.max(answer, lv);
-        
-    }
+        max = Math.max(max, lv);
+    } 
+    
     //솔루션
     public int solution(int k, int[][] dungeons) {
-        
-        visited = new boolean[dungeons.length];
+        int answer = 0;
+        visited =new boolean[dungeons.length];//던전 방문 체크용
         
         DFS(0, k, dungeons);
+        answer = max;//최대깊이 값 
         
         return answer;
     }
