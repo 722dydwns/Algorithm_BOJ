@@ -1,32 +1,39 @@
-/*백준 DP 문젣*/
-import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * 백준 9095번. 1,2,3 더하기 - 백트래킹 문풀 
+ * @author MYLG
+ *
+ */
 public class Main {
+	static int TC;
+	static int N;
+	static int count;
+	//DFS
+	static void DFS(int sum) {
+		if(sum >= N) {
+			if(sum == N) count++;
+			//더 커진 경우는 탐색 불필요하므로 그냥 리턴
+			return;
+		}
+		
+		for(int i=1; i<=3; i++) {
+			DFS(sum + i);//더 깊이 탐색 
+		}
+	}
 
+	//실행 메인 
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+		// TODO Auto-generated method stub
+		Scanner kb= new Scanner(System.in);
+		TC = kb.nextInt();
 		
-		int N = sc.nextInt();
-		
-		int[] D = new int[11];
-		
-		D[0] = 0;
-		D[1] = 1;
-		D[2] = 2;
-		D[3] = 4;
-		
-
-		int a = 0;
-		ArrayList<Integer> answer = new ArrayList<>();
-		
-		for(int i = 0; i < N; i++) {
-			a = sc.nextInt();
-			for(int j = 4; j <= a; j++) {
-				D[j] = D[j - 1] + D[j - 2] + D[j - 3];
-			}
-			answer.add(D[a]);
-		}	
-		for(int x : answer) System.out.println(x);
+		for(int t=0; t<TC; t++) {
+			N =kb.nextInt();
+			count = 0;
+			
+			DFS(0);
+			System.out.println(count);	
+		}
 	}
 }
