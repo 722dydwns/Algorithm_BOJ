@@ -1,57 +1,57 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Scanner;
+
 /**
- * 9663번. N-Queen 문제 - 백트래킹 문풀
+ * 9963번. N-Queen - 백트래킹 문풀  
+ * @author MYLG
+ *
  */
 public class Main {
-	static int[] arr;
-	static int N;
 	static int count = 0;
+	static int N;
+	static int[] arr;
 	
-	//DFS - 깊이는 행을 의미한다. 
-	public static void DFS(int row) { //행으로 깊이 탐색을 시도 
+	//DFS
+	static void DFS(int row) { //행에 대한 깊이탐색 시도 
 		if(row == N) {
-			count++;
+			count++;//여기까지 깊이 행이 도달했다면 모든 행에 퀸을 두었다는 것이므로 ++처리 
 			return;
 		}
 		
-		for(int i = 0 ;i < N; i++) {
-			arr[row] = i;
-			if(possible(row)) {
-				DFS(row+1); //다음 행으로 더 깊이 탐색 
+		for(int i=0; i<N; i++) {
+			arr[row] = i;//현재 깊이의 행에 퀸 위치를 i열에 둔다
+			if(isPossible(row)) {
+				DFS(row+1);//다음 깊이로 이동
 			}
-		}	
+		}
 	}
-	/**
-	 * arr[i] = j는 i 행의 j 열에 퀸이 위치한다는 것을 의미합니다. 
-	 * 이 코드에서 arr[] 배열은 각 행마다 퀸이 위치한 열을 나타냅니다.
-	 */
-	public static boolean possible(int row) {
-		for(int i = 0 ; i < row ; i++) {
-			//모든 행을 탐색하면서 행에 담긴 열의 값이 들어온 행에 대한 열의 값과 같은지 판단합니다. 
-			if(arr[i]==arr[row]) {
-				return false;
+	
+	//isPossible
+	static boolean isPossible(int row) {
+		for(int i=0; i<row; i++) {
+			if(arr[i] == arr[row]) {
+				//들어온 행에대한 열과 같은 열값을 갖는 게 이전 arr에 있었는지 확인 
+				return false;//그 위치는 공격가능한 영역이므로 
 			}
-			//대각선에 공격 가능 (직전 행 - 현재 행) (직전 열 - 현재 열) 두 차이의 절댓값 값이 같다는 건 동일 대각선 상에 있다는 뜻입니다. 
-			else if(Math.abs(row-i) == Math.abs(arr[row]-arr[i])) {
+			
+			//들어온 직전 행, 현재 찍은 i행 차이와 직전 열 - 현재 i열의 차가 같은 경우 동일 대각선상에 존재하는 퀸이 존재하므로 안됨 
+			if(Math.abs(i-row) == Math.abs(arr[i]-arr[row])) {
 				return false;
 			}
 		}
-		
 		return true;
 	}
 	
 	//실행 메인 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String str = br.readLine();
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner kb= new Scanner(System.in);
 		
-		N = Integer.parseInt(str);
+		N = kb.nextInt();
 		arr = new int[N];
 		
 		DFS(0);
+		
 		System.out.println(count);
+		
 	}
 }
