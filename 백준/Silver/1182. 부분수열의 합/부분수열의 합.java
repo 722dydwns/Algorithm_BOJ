@@ -1,45 +1,41 @@
 import java.util.Scanner;
 
 /**
- * 백트래킹 
- *
- *백준 1182번. 부분수열의 합 - DFS
+ *  1182번. 부분 수열의 합 - 백트래킹 
  * @author MYLG
  *
  */
 public class Main {
-	static int answer;
 	static int N, S;
-	static int[] num;
-	static boolean[] visited;
+	static int[] arr;
+	static int count= 0;
 	//DFS
 	static void DFS(int lv, int sum) {
-		if(lv == N) {//그걸 N번
-			if(sum == S)answer++;	
+		if(lv == N) {
+			if(sum == S) {
+				count++;
+			}
 			return;
 		}
 		
-		DFS(lv+1, sum + num[lv]); //현재 레벨의 원소 뽑은 경우
-		DFS(lv+1, sum); //안뽑은 경우
+		DFS(lv+1, sum + arr[lv]); //현재 원소 선택 O
+		DFS(lv+1, sum ); //선택 X
+		
 	}
-	
+		
 	//실행 메인 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Scanner kb = new Scanner(System.in);
-		
+		Scanner kb= new Scanner(System.in);
 		N = kb.nextInt();
-		S = kb.nextInt();
+		S = kb.nextInt();//타겟 넘버
 		
-		num = new int[N];
-		visited = new boolean[N];
+		arr = new int[N];
+		for(int i=0; i<N; i++) arr[i] = kb.nextInt();
 		
-		for(int i=0; i<N; i++) num[i]= kb.nextInt();
-		answer = 0;
 		DFS(0, 0);
+		if(S == 0) count--;
 		
-		if(S == 0) answer--;
-		
-		System.out.println(answer);
+		System.out.println(count);
 	}
 }
