@@ -24,8 +24,6 @@ public class Main {
 			arr[i]=  kb.nextInt();
 			ed = Math.max(ed, arr[i]);
 		}
-		
-		
 		int st = 0;
 		
 		while(st <= ed) {
@@ -40,7 +38,7 @@ public class Main {
 			}
 			
 			if(tmp >= M) {
-				answer = Math.max(answer, mid); 
+				answer = mid;
 				st = mid + 1 ; //윗구간 
 			}else {
 				ed = mid - 1;
