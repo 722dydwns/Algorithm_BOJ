@@ -1,50 +1,51 @@
 import java.util.Scanner;
 
 /**
- * 2805번. 나무 자르기 - 이분탐색 문풀
+ * 2805번. 나무 자르기 - 이분 탐색 문풀
  * @author MYLG
  *
  */
 public class Main {
 	static int N, M;
 	static int[] arr;
-	static long answer = 0;//정답용 
+	static int answer;
 	
-	//실행 메인 
+	//실행 메인
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner kb= new Scanner(System.in);
-		
 		N = kb.nextInt();
 		M = kb.nextInt();
-		arr = new int[N];
 		
-		int ed = Integer.MIN_VALUE;
+		arr = new int[N];
+		int ed = 0;
 		for(int i=0; i<N; i++) {
-			arr[i]=  kb.nextInt();
+			arr[i] = kb.nextInt();
 			ed = Math.max(ed, arr[i]);
 		}
+		
+		//절단기의 범위를 좁히자 
 		int st = 0;
 		
 		while(st <= ed) {
-			//절단기로 설정
-			int mid = (st+ed) /2;
-			
-			long tmp = 0;
+			int mid = (st + ed) / 2;
+		
+			long tmp = 0;//높이가 10억까지 올 수 있으므로
 			for(int i=0; i<N; i++) {
 				if(arr[i] - mid > 0) {
-					tmp+= arr[i] - mid;
+					tmp += (arr[i] - mid);
 				}
 			}
 			
 			if(tmp >= M) {
 				answer = mid;
-				st = mid + 1 ; //윗구간 
+				st = mid + 1;//더 높은 절단면에서 ~ ed 사이에서 정답을 구해보자 
 			}else {
-				ed = mid - 1;
-			}			
+				ed = mid - 1;//더 작은 절단면까지 
+			}
 		}
-		
-		System.out.println(answer);	
+	
+		System.out.println(answer);
 	}
+
 }
