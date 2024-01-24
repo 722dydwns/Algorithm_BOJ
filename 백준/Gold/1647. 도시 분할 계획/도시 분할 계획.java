@@ -1,73 +1,73 @@
-import java.util.*;
+import java.util.PriorityQueue;
+import java.util.Scanner;
 
-public class Main {    
- 
-    static int n, m;
-    static PriorityQueue<Node> q;
-    static int[] parent;
-    
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
- 
-        n = scan.nextInt();
-        m = scan.nextInt();
-        
-        q = new PriorityQueue<>();
-        for(int i = 0; i < m; i++) {
-            int s = scan.nextInt();
-            int e = scan.nextInt();
-            int cost = scan.nextInt();
-            q.offer(new Node(s, e, cost));
-        }
-        
-        parent = new int[n + 1];
-        System.out.println(kruskal());
-    }
-    
-    public static int kruskal() {
-        for(int i = 1; i <= n; i++) {
-            parent[i] = i;
-        }
-        
-        int count = 0;
-        int dist = 0; //현재 까지의 최소 간선 경로 값의 합
-        while(count < n - 2) { // n - 2개의 간선을 선택한다.
-            Node node = q.poll();
-            int p1 = find(node.s);
-            int p2 = find(node.e);
-            
-            if(p1 != p2) {
-                union(p1, p2);
-                dist += node.cost;
-                count++; // 싸이클이 발생되지 않아 최소 간선으로 선택된 경우에만 count++를 해준다.
-            }
-        }
-        return dist;
-    }
-    
-    public static void union(int a, int b) {
-        parent[a] = b;
-    }
-    
-    public static int find(int a) {
-        if(parent[a] == a) return a;
-        else return parent[a] = find(parent[a]);
-    }
-    
-    public static class Node implements Comparable<Node> {
-        int s;
-        int e;
-        int cost;
-        
-        public Node(int s, int e, int cost) {
-            this.s = s;
-            this.e = e;
-            this.cost = cost;
-        }
-        
-        @Override
-        public int compareTo(Node n1) {
-            return this.cost - n1.cost;
-        }
-    }
+/**
+ * 백준 1647번. 도시 분할 계획 - MST (크루스칼) 문풀 
+ * @author MYLG
+ *
+ */
+class Edge implements Comparable<Edge>{
+	int s, e, val;
+	Edge(int s, int e, int val){
+		this.s = s;
+		this.e = e;
+		this.val = val;
+	}
+	@Override
+	public int compareTo(Edge o) {
+		// TODO Auto-generated method stub
+		return this.val - o.val;
+	}
+}
+public class Main {
+	static int N, M;
+	static int[] parent;
+	//find
+	static int find(int a) {
+		if(a == parent[a]) return a;
+		return parent[a] = find(parent[a]);
+	}
+	//union
+	static void union(int a, int b) {
+		a = find(a);
+		b = find(b);
+		if(a != b) {
+			parent[b] = a;
+		}
+	}
+	
+	//실행 메인 
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner kb= new Scanner(System.in);
+		N = kb.nextInt();
+		M = kb.nextInt();
+		parent = new int[N+1];
+		
+		for(int i=1; i<=N; i++) parent[i]= i;
+		PriorityQueue<Edge> pQ = new PriorityQueue<>();
+		
+		for(int i=0; i<M; i++) {
+			int a = kb.nextInt();
+			int b = kb.nextInt();
+			int val = kb.nextInt();
+			pQ.offer(new Edge(a, b, val));
+		}
+		
+		int useEdge = 0;
+		int useCost = 0;
+		
+		int maxCost = 0;
+		
+		while(useEdge<N-1) {
+			Edge cur = pQ.poll();
+			if(find(cur.s) != find(cur.e)) {
+				union(cur.s, cur.e);
+				useCost += cur.val;
+				maxCost = cur.val;//가장 마지막에 연결될 값이 가장 큼
+				useEdge++;
+			}
+		}
+		System.out.println(useCost - maxCost);
+	}
 }
