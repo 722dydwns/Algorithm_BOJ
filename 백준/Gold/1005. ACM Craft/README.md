@@ -4,11 +4,15 @@
 
 ### 성능 요약
 
-메모리: 311904 KB, 시간: 2236 ms
+메모리: 310696 KB, 시간: 2220 ms
 
 ### 분류
 
-다이나믹 프로그래밍, 그래프 이론, 위상 정렬
+방향 비순환 그래프, 다이나믹 프로그래밍, 그래프 이론, 위상 정렬
+
+### 제출 일자
+
+2024년 1월 27일 12:33:06
 
 ### 문제 설명
 
@@ -18,7 +22,7 @@
 
 <p> </p>
 
-<p style="text-align: center;"><img alt="" src="" style="height:335px; width:635px"></p>
+<p style="text-align: center;"><img alt="" src="https://www.acmicpc.net/upload/201003/star.JPG" style="height:335px; width:635px"></p>
 
 <p>위의 예시를 보자.</p>
 
