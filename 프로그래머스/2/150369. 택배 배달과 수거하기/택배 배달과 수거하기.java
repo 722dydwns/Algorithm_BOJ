@@ -1,21 +1,24 @@
 class Solution {
-    
     public long solution(int cap, int n, int[] deliveries, int[] pickups) {
-        //트럭 하나로 모든 배달과 수거 마치고 돌아온 (0,0) 최소 이동 거리 return
-         long answer = 0; // 거리용 
+        long answer = 0;
+        int d_cap = 0;
+        int p_cap = 0;
         
-        int d = 0;
-        int p = 0;
-        for(int i=n-1; i>=0; i--){//뒤부터 돌아야 함 
-            d -= deliveries[i]; //배달
-            p -= pickups[i]; //수거
+        for(int i=n-1; i>=0; i--){ //역순 탐색
+            d_cap += deliveries[i];
+            p_cap += pickups[i];
             
-            while(d <0 || p<0){
-                d += cap;
-                p += cap;
+            while(d_cap > 0 || p_cap >0) {
+                //둘 중 하나라도 0보다 크다면 
+                // cap 빼줌 : 왜 ? - 현재 i+1 지점에서 차가 접근해서 처리한 거임 
+                //cap 빼주고 음수가 됐다면 물류 안들려도 되는 거고 
+                //cap 빼주고 양수가 됐다면 물류창고 한번 더 가야 하는거임
+                d_cap -= cap;
+                p_cap -= cap;
                 answer += (i+1) * 2;
             }
         }
+        
         return answer;
     }
 }
