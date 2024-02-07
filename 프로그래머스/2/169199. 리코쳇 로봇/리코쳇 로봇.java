@@ -1,10 +1,10 @@
 import java.util.*;
 class Node{
-    int x, y, count;
-    Node(int x, int y, int count){
+    int x, y, cnt;
+    Node(int x, int y, int cnt){
         this.x = x;
         this.y = y;
-        this.count = count;
+        this.cnt = cnt;
     }
 }
 class Solution{
@@ -40,12 +40,12 @@ class Solution{
         
         while(!Q.isEmpty()){
             Node cur = Q.poll();
-            
-            if(answer <= cur.count){
+            System.out.println(cur.x  + " " + cur.y + " : "+cur.cnt);
+            if(answer <= cur.cnt){
                 continue;
             }
             if(map[cur.x][cur.y] == 'G'){
-                answer = Math.min(answer, cur.count);
+                answer = Math.min(answer, cur.cnt);
                 continue;
             }
             
@@ -66,8 +66,7 @@ class Solution{
                 if(visited[nx][ny]) continue;
                 
                 visited[nx][ny] = true;
-                Q.offer(new Node(nx, ny, cur.count + 1));
-                
+                Q.offer(new Node(nx, ny, cur.cnt + 1));
             }
             
         }
