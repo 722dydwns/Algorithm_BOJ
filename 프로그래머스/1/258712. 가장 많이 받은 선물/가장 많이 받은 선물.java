@@ -31,7 +31,8 @@ class Solution {
         
         for(int i=0; i<N; i++){
             for(int j=0; j<N; j++){
-                if(i==j) continue;
+                if(i>=j) continue; //중복 제거 
+                
                 //i,j 둘 사이의 관계에서 
                 if(map[i][j] > map[j][i]){ //i가 준게 더 크다면 
                     arr[i]++;
@@ -53,6 +54,6 @@ class Solution {
            answer = Math.max(answer,x);
        }
        
-        return answer/2;
+        return answer;
     }
 }
