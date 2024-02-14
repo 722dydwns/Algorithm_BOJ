@@ -1,74 +1,94 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+/**
+ * 11437번. LCA - LCA 문풀
+ * @author MYLG
+ *
+ */
 public class Main {
-  static ArrayList<Integer>[] tree;
-  static int[] depth;
-  static int[] parent;
-  static boolean[] visited;
-  public static void main(String[] args) {
-    Scanner sc = new Scanner(System.in);
-    int N = sc.nextInt(); // 정점의 수
-    tree = new ArrayList[N + 1];
-    for (int i = 1; i <= N; i++) {
-      tree[i] = new ArrayList<Integer>();
-    }
-    for (int i = 0; i < N - 1; i++) { // A인접리스트에 그래프 데이터 저장
-      int s = sc.nextInt();
-      int e = sc.nextInt();
-      tree[s].add(e);
-      tree[e].add(s);
-    }
-    depth = new int[N + 1];
-    parent = new int[N + 1];
-    visited = new boolean[N + 1];
-    BFS(1); // depth를 BFS를 통하여 구하기
-    int M = sc.nextInt(); // 질의의 수
-    for (int i = 0; i < M; i++) {
-      // 공통 조상을 구할 두 노드
-      int a = sc.nextInt();
-      int b = sc.nextInt();
-      int LCA = excuteLCA(a, b);
-      System.out.println(LCA);
-    }
-  }
-  static int excuteLCA(int a, int b) {
-    if (depth[a] < depth[b]) {
-      int temp = a;
-      a = b;
-      b = temp;
-    }
-    while (depth[a] != depth[b]) { // 두 노드의 Depth 맞춰주기
-      a = parent[a];
-    }
-    while (a != b) { // 같은 조상이 나올 때까지 한칸씩 올려주기
-      a = parent[a];
-      b = parent[b];
-    }
-    return a;
-  }
-  // BFS구현
-  private static void BFS(int node) { 
-    Queue<Integer> queue = new LinkedList<Integer>();
-    queue.add(node);
-    visited[node] = true;
-    int level = 1;
-    int now_size = 1;
-    int count = 0;
-    while (!queue.isEmpty()) {
-      int now_node = queue.poll();
-      for (int next : tree[now_node]) {
-        if (!visited[next]) {
-          visited[next] = true;
-          queue.add(next);
-          parent[next] = now_node;  //부모 노드 저장
-          depth[next] = level; //노드 depth 저장
-        }
-      }
-      count++;
-      if (count == now_size) {
-        count = 0;
-        now_size = queue.size();
-        level++;
-      }
-    }
-  }
+	static ArrayList<ArrayList<Integer>> tree;
+	static int[] depth;//각 i별 깊이 
+	static int[] parent;//각 i별 부모노드 
+	static boolean[] visited;
+	
+	//BFS -> DFS로 구해도 상관없다. 깊이와 부모만 잘 담아주면 됨 
+	 // BFS구현
+	  private static void BFS(int node) { 
+	    Queue<Integer> Q = new LinkedList<Integer>();
+	    Q.add(node);
+	    visited[node] = true;    
+	    int now_size = Q.size();
+	    int count = 0;
+	    while (!Q.isEmpty()) {
+	      int now_node = Q.poll();
+	      for (int next : tree.get(now_node)) {
+	        if (!visited[next]) {
+	          visited[next] = true;
+	          Q.add(next);
+	          parent[next] = now_node;  //부모 노드 저장
+	          depth[next] = depth[now_node] + 1;
+	        }
+	      }
+	      
+	    }
+	  }
+	//getLCA
+	private static int getLCA(int a, int b) {
+		if(depth[a] < depth[b]) {
+			int tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
+		while(depth[a] != depth[b]) {//두 노드 깊이 맞추기 위함
+			a = parent[a]; //더 깊은 노드를 계속 한칸씩 거슬러올림 
+		}
+		
+		while(a != b) { //같은 조상 나올 때까지 동시에 한칸씩 올림 
+			a = parent[a];
+			b = parent[b];
+		}
+		//같아져서 탈출한 상황 -> LCA 리턴
+		return a;
+	}
+	
+	//실행 메인 
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner kb = new Scanner(System.in);
+		int N = kb.nextInt();
+		
+		tree = new ArrayList<>();
+		for(int i=0; i<=N; i++) tree.add(new ArrayList<>());
+		
+		depth = new int[N+1];
+		parent = new int[N+1];
+		visited = new boolean[N+1];
+		
+		//1) 데이터 세팅 
+		for(int i=0; i<N-1; i++) {//N개 노드에 대한 간선 정보는 N-1개 들어옴
+			int a = kb.nextInt();
+			int b = kb.nextInt();
+			//양방향 이어주기
+			tree.get(a).add(b);
+			tree.get(b).add(a);
+		}
+		
+		// 2) BFS로 정보 세팅 
+		BFS(1);
+		
+		//질의 개수 구하기 
+		int M = kb.nextInt();
+		
+		for(int i=0; i<M; i++) {
+			int a = kb.nextInt();
+			int b = kb.nextInt();
+			//a,b의 LCA구하기 
+			int LCA = getLCA(a, b);
+			System.out.println(LCA);
+		}
+	}
 }
