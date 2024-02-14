@@ -1,7 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 public class Main {
   static ArrayList<Integer>[] tree;
   static int[] depth;
@@ -26,10 +29,20 @@ public class Main {
     visited = new boolean[N + 1];
     int temp = 1;
     kmax = 0;
+    
+    int len = N;
+    while(len != 0) {
+    	len /= 2;
+    	kmax++;
+    }
+
+    /**
+     *     
     while (temp <= N) { // 최대 가능 Depth 구하기
       temp <<= 1;
-      kmax++;
+      kmax++; 
     }
+     */
     parent = new int[kmax + 1][N + 1];
     BFS(1); // depth를 BFS를 통하여 구하기
     for (int k = 1; k <= kmax; k++) {
