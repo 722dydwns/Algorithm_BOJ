@@ -1,59 +1,67 @@
 import java.util.*;
-
 class Solution {
-    private static int[][] map;
-    
+    public int[][] map;
+    public ArrayList<Integer> answer;
+    //회전시키기 
+    public int rotate(int[] query){
+        int x1 = query[0];
+        int y1=  query[1];
+        int x2 = query[2];
+        int y2 = query[3];
+        
+        int prev = map[x1][y1];
+        int min = prev;
+        
+        //우측
+        for(int i= y1+1; i<=y2; i++){
+            int tmp = map[x1][i];
+            map[x1][i] = prev;
+            min = Math.min(min, prev);
+            prev = tmp; //직전값은 기존의 값으로 세팅 
+        }
+        //하강
+        for(int i=x1+1; i<=x2; i++){
+            int tmp = map[i][y2];
+            map[i][y2] = prev;
+            min = Math.min(min, prev);
+            prev = tmp; //기존값으로 세팅 
+        }
+        
+        //좌측
+        for(int i=y2-1; i>=y1; i--){
+            int tmp = map[x2][i];
+            map[x2][i] = prev;
+            min = Math.min(min, prev);
+            prev = tmp;
+        }
+        //상승
+        for(int i=x2-1; i>=x1; i--){
+            int tmp = map[i][y1];
+            map[i][y1] = prev;
+            min = Math.min(min, prev);
+            prev = tmp;
+        }
+        
+        return min;
+    }
     //솔루션 함수 
-    public int[] solution(int rows, int columns, int[][] queries) {
-        int[] answer = new int[queries.length];
-        
+    public List<Integer> solution(int rows, int columns, int[][] queries) {
+        answer = new ArrayList<Integer>();
+        // 맵 초기화
         map = new int[rows+1][columns+1];
-        int val = 1;
-        for(int i=1; i<=rows; i++){
-            for(int j=1; j<=columns; j++){
-                map[i][j] = val;
-                val++;
-            }
+        int num = 1;
+        for(int i = 1; i <= rows; i++){
+            for(int j = 1; j <= columns; j++){
+                map[i][j] = num;
+                num++;
+            }  
+            
         }
-        int idx = 0;
-        for(int[] x : queries){
-            int x1 = x[0];
-            int y1 = x[1];
-            int x2 = x[2];
-            int y2 = x[3];
-            
-            int tmp = map[x1][y1];//최초값
-            int min = tmp;
-            
-            //오른쪽으로 이동 ->
-            for(int i=x1; i<x2; i++){
-                map[i][y1] = map[i+1][y1];
-                min = Math.min(min, map[i][y1]);
-            }
-            
-            //아래로 이동
-            for(int i=y1; i<y2; i++){
-                map[x2][i] = map[x2][i+1];
-                min = Math.min(min, map[x2][i]);
-            }
-            
-            //왼쪽으로 이동 <-
-            for(int i=x2; i>x1; i--){
-                map[i][y2] = map[i-1][y2];
-                min = Math.min(min, map[i][y2]);
-            }
-            
-            //위로 이동
-            for(int i=y2; i>y1; i--){
-                map[x1][i] = map[x1][i-1];
-                min = Math.min(min, map[x1][i]);
-            }
-            map[x1][y1+1] = tmp;
-            answer[idx] = min;
-            idx++;
+        for(int i = 0; i < queries.length; i++){
+            answer.add(rotate(queries[i]));   
         }
-        
-        
+
         return answer;
     }
+
 }
