@@ -1,57 +1,59 @@
-import java.util.LinkedList;
-import java.util.Queue;
-
+import java.util.*;
 
 class Solution {
+    private static int[][] map;
+    
+    //솔루션 함수 
     public int[] solution(int rows, int columns, int[][] queries) {
-        Queue<Integer> ans_q = new LinkedList<Integer>();
-        int[][] map = new int[rows][columns];
-        for(int i=0;i<rows;i++) {
-        	for(int j=1;j<=columns;j++){
-        		map[i][j-1] = i*columns+j;
-        	}
-        }
-        int[] dx = {0, 1, 0, -1};
-        int[] dy = {-1, 0, 1, 0};
-        //오른쪽 위부터 시작한다 !
+        int[] answer = new int[queries.length];
         
-        for(int[] q : queries) {
-        	int min = rows*columns;
-        	int x1 = q[0]-1;
-        	int y1 = q[1]-1;
-        	int x2 = q[2]-1;
-        	int y2 = q[3]-1;
-        	//한눈에 알 수 있도록 변수로 표현
-            
-        	int[][] limit = {{x1,y1},{x2,y1},{x2,y2},{x1,y2}};
-            //while문이 종료될 조건 
-            
-        	int x = x1;
-        	int y = y2;
-        	int tmp = map[x][y];
-            //가장 오른쪽 위 값은 tmp에 담아놓고, 오른쪽 위부터 덮어쓰기를 시작한다.
-        	for(int i=0;i<4;i++) {
-        		while(true) {
-        			int nowx = x+dx[i];
-        			int nowy = y+dy[i];
-        			if(0>nowx||0>nowy||rows<=nowx||columns<=nowy) continue;
-        			min = Math.min(map[x][y], min);
-        			map[x][y] = map[nowx][nowy];
-        			x = nowx;
-        			y = nowy;
-        			if(nowx==limit[i][0]&&nowy==limit[i][1]) {
-        				break;
-        			}
-        		}
-        	}
-        	map[x1+1][y2] = tmp;
-        	ans_q.add(min);
+        map = new int[rows+1][columns+1];
+        int val = 1;
+        for(int i=1; i<=rows; i++){
+            for(int j=1; j<=columns; j++){
+                map[i][j] = val;
+                val++;
+            }
         }
-        int[] ans = new int[ans_q.size()];
-        int i=0;
-        while(!ans_q.isEmpty()) {
-        	ans[i++] = ans_q.poll();
+        int idx = 0;
+        for(int[] x : queries){
+            int x1 = x[0];
+            int y1 = x[1];
+            int x2 = x[2];
+            int y2 = x[3];
+            
+            int tmp = map[x1][y1];//최초값
+            int min = tmp;
+            
+            //오른쪽으로 이동 ->
+            for(int i=x1; i<x2; i++){
+                map[i][y1] = map[i+1][y1];
+                min = Math.min(min, map[i][y1]);
+            }
+            
+            //아래로 이동
+            for(int i=y1; i<y2; i++){
+                map[x2][i] = map[x2][i+1];
+                min = Math.min(min, map[x2][i]);
+            }
+            
+            //왼쪽으로 이동 <-
+            for(int i=x2; i>x1; i--){
+                map[i][y2] = map[i-1][y2];
+                min = Math.min(min, map[i][y2]);
+            }
+            
+            //위로 이동
+            for(int i=y2; i>y1; i--){
+                map[x1][i] = map[x1][i-1];
+                min = Math.min(min, map[x1][i]);
+            }
+            map[x1][y1+1] = tmp;
+            answer[idx] = min;
+            idx++;
         }
-        return ans;
+        
+        
+        return answer;
     }
 }
