@@ -1,66 +1,62 @@
 import java.util.*;
-
 class Solution {
-
-    public static int[] solution(int[] fees, String[] records) {
-        Map<String, String> map = new HashMap<>();
-        StringTokenizer st;
-        Map<String, Integer> ans = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
-
-        for (int i = 0; i < records.length; i++) {
-            st = new StringTokenizer(records[i]);
-            String time = st.nextToken();
-            String carNumber = st.nextToken();
-            String state = st.nextToken();
-
-            if (state.equals("IN")) {
-                map.put(carNumber, time);
-                continue;
-            }
-
-            int min = getMin(time, map.get(carNumber));
-
-            ans.put(carNumber, ans.getOrDefault(carNumber, 0) + min);
-            map.remove(carNumber);
-        }
-
-        //출차하지 않은 차량은 11:59분에 출차했다고 설정
-        if (!map.isEmpty()) {
-            for (String carNumber : map.keySet()) {
-                int min = getMin("23:59", map.get(carNumber));
-                ans.put(carNumber, ans.getOrDefault(carNumber, 0) + min);
+    //시간 -> 분으로 교체
+    private static int getTime(String time){
+        int H = Integer.parseInt(time.split(":")[0]);
+        int M = Integer.parseInt(time.split(":")[1]);
+        return 60 * H + M;
+    }
+    
+    //솔루션 함수 
+    public List<Integer> solution(int[] fees, String[] records) {
+        //차번호, 누적시간
+        Map<String, Integer > map = new HashMap<>(); 
+            
+        for(String info : records){
+            String time = info.split(" ")[0];
+            String carNum = info.split(" ")[1];
+            String inOut = info.split(" ")[2];
+            
+            int mTime = getTime(time); //분
+            if(inOut.equals("IN")){ //입차 기록 
+                map.put(carNum, map.getOrDefault(carNum, 0) - mTime); //음수로
+            }else{ //출차 기록 
+                map.put(carNum, map.getOrDefault(carNum, 0) + mTime); //양수로
             }
         }
-
-        return getAnswer(ans, fees);
-    }
-
-    private static int[] getAnswer(Map<String, Integer> ansMap, int[] fees) {
-        List<Integer> ans = new ArrayList<>();
-
-        for (String carNumber : ansMap.keySet()) {
-            int min = ansMap.get(carNumber);
-            int fee = 0;
-
-            if (min <= fees[0]) { //기본 시간 이하라면 기본요금 부과
-                fee += fees[1];
-            } else { //기본 시간 이상이면 기본 요금 + 단위 시간 계산해 단위 요금 부과
-                fee += (((int)Math.ceil(((double)min - fees[0]) / fees[2])) * fees[3]) + fees[1];
+        
+        //빠져나온 상태에서 음수나 0으로 존재하는 경우는 출차기록이 없는 거임 출차 처리
+        for(String car : map.keySet()){
+            if(map.get(car) <= 0){
+                int m = map.get(car);
+                m += getTime("23:59");
+                map.put(car, m);
             }
-
-            ans.add(fee);
         }
-        return ans.stream()
-            .mapToInt(Integer::intValue).toArray();
+        
+        //이제 요금 계산하기 
+        List<Integer> answer = new ArrayList<>();
+        List<String> keySet = new ArrayList<>(map.keySet());
+        Collections.sort(keySet);
+        
+        for(String car : keySet){
+            //기본요금 0원이 아니면서, 
+            if(fees[1] != 0 && map.get(car) != 0 && map.get(car) <= fees[0]) { //기본요금 이하면 
+                answer.add(fees[1]);
+            }else{
+                int base = map.get(car) - fees[0];//기본요금 빼고
+                int dan = base / fees[2];
+                if(base % fees[2] != 0){//나눠떨어지면
+                    dan += 1;
+                }
+                
+                int price = fees[1] + (dan * fees[3]);
+                answer.add(price);
+            }
+            
+        }
+        
+        
+        return answer;
     }
-
-    private static int getMin(String outTime, String inTime) {
-        StringTokenizer st = new StringTokenizer(outTime, ":");
-        int o1 = Integer.parseInt(st.nextToken()) * 60 + Integer.parseInt(st.nextToken());
-        st = new StringTokenizer(inTime, ":");
-        int o2 = Integer.parseInt(st.nextToken()) * 60 + Integer.parseInt(st.nextToken());
-
-        return o1 - o2;
-    }
-
 }
