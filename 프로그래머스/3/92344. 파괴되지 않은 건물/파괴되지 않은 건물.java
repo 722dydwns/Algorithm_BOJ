@@ -5,46 +5,49 @@ class Solution {
         int N = board.length;
         int M = board[0].length;
         
-        //누적합용 
-        int[][] sums = new int[N+1][M+1];
+        //1) 누적합 구할 용도 2차원 배열 선언 공간 1씩 크게 선언해야 됨 
+        int[][] sums = new int[N+1][M+1]; 
         
+        //2) 각 경계에 처리해줘야 할 경계 포인터 찍어주기 
         for(int[] sk : skill){
-            int val = sk[0] == 1 ? -sk[5] : sk[5];
+            int val = sk[5];
+            if(sk[0] == 1) {
+                val = -sk[5];
+            }
+            
             int sx = sk[1];
             int sy = sk[2];
             int ex = sk[3];
             int ey = sk[4];
             
-            //영역별 구간합 둘 좌표 찍어두기 
+            //경계 포인터 누적 찍기
             sums[sx][sy] += val;
-            sums[sx][ey+1] -= val;
-            sums[ex+1][sy] -= val;
+            sums[sx][ey+1] += (-val);// 반대로 (경계 처리)
+            sums[ex+1][sy] += (-val);// 반대로 (경계 처리)
             sums[ex+1][ey+1] += val;
         }
         
-        //누적합
-        for(int j = 0; j<M; ++j){
-            for(int i=1; i<N; ++i){
-                sums[i][j] += sums[i-1][j]; //행 기준 직전합에 누적합
+        //3) 각 경계에 있는 거 행별/열별 누적 처리 
+        for(int i=0; i<=N; i++){
+            for(int j=1; j<=M; j++){//열 기준 직전과 현재값을 누적합
+                sums[i][j] += sums[i][j-1];
             }
         }
         
-        for(int i=0; i<N; ++i){
-            for(int j=1; j<M; ++j){
-                sums[i][j] += sums[i][j-1]; //열 기준 직전열에 누적합
+        for(int j=0; j<=M; j++){
+            for(int i=1; i<=N; i++){ //행 기준 직전과 현재값을 누적합 
+                sums[i][j] += sums[i-1][j]; 
             }
         }
         
-        //누적된 sums값을 board에 합체시키기 
         int answer = 0;
-        
-        for(int i=0; i<N; ++i){
-            for(int j=0; j<M; ++j){
+        //4) board에 각 경계별 처리된 sums의 누적된 값들만 처리해주기 
+        for(int i=0; i<N; i++){
+            for(int j=0; j<M; j++){
                 board[i][j] += sums[i][j];
-                if(board[i][j] > 0) answer++;
+                if(board[i][j] >= 1) answer++;
             }
         }
-        
         return answer;
     }
 }
