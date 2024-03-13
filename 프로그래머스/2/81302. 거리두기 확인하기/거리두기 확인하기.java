@@ -1,68 +1,56 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 class Solution {
-    static int[] dx = {-1, 1, 0, 0}, dy ={0, 0, -1, 1};
-    static char[][] matrix;
-    static boolean[][] check;
-    static boolean isAvailable;
-    
-    static int[] solution(String[][] places) {
+    public int[] solution(String[][] places) {
         int[] answer = new int[5];
-        
-        for (int i=0; i<5; i++) {
-            isAvailable = false;
-            matrix = new char[5][5];
-            // matrix에 값 추가
-            for (int j=0; j<5; j++) {
-                matrix[j] = places[i][j].toCharArray();
-            }
-   
-            
-            // matrix에 사람이 있는 곳들을 검사
-            for (int r=0; r<5; r++) {
-                for (int c=0; c<5; c++) {
-                	if (matrix[r][c] == 'P') {
-                		check = new boolean[5][5];
-	                    dfs(0, r, c);
-	                    if (isAvailable) {
-	                    	break;  	
-	                    }
-                	}
-                }
-                if (isAvailable) break;
-            }
-            if (isAvailable) answer[i] = 0;
-            else answer[i] = 1;
-        }
-        
-        return answer;
-        
-        
-    }
-    
-    static void dfs(int currentDepth, int r, int c) {
-        if (currentDepth >= 2) return;
-        check[r][c] = true;
-        for (int i=0; i<4; i++) {
-            int nr = r + dx[i];
-            int nc = c + dy[i];
-            
-            if (nr < 0 || nr >= 5 || nc < 0 || nc >= 5 || check[nr][nc]) continue;
-            
-            
-            // 테이블이 있을 경우
-            if (matrix[nr][nc] == 'O') dfs(currentDepth+1, nr, nc);
-            
-            // 사람이 있을 경우 거리두기 실패
-            else if (matrix[nr][nc] == 'P') {
-                isAvailable = true;
-                return;
-            }
-            // 벽이 있는 경우
-            else if (matrix[nr][nc] == 'X') {
-                continue;
-            }
- 
-        }
-    }
 
+        for (int i = 0; i < places.length; i++) {
+            String[] temp = places[i];
+            boolean check = false;
+            for (int j = 0; j < 5; j++) {
+                for (int k = 0; k < 5; k++) {
+                    if (temp[j].charAt(k) == 'P') {
+                        if(bfs(j, k, temp)) {
+                            check = true;
+                        }
+                    }
+                }
+            }
+            answer[i] = check ? 0 : 1;
+        }
+        return answer;
+    }
+    static boolean bfs(int x, int y, String[] p) {
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{x, y});
+
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+
+        while (!queue.isEmpty()) {
+            int[] temp = queue.poll();
+            for (int i = 0; i < 4; i++) {
+                int nx = temp[0] + dx[i];
+                int ny = temp[1] + dy[i];
+
+                // 탐색 범위를 벗어나면 + 최초 출발점을 탐색에서 제외
+                if ((nx < 0 || ny < 0 || nx >= 5 || ny >= 5) || (nx == x && ny == y)) {
+                    continue;
+                }
+
+                // 맨해튼 거리 구하기
+                int m = Math.abs(x - nx) + Math.abs(y - ny);
+
+                // p가 맨해튼 거리 안에 있다면
+                if (p[nx].charAt(ny) == 'P' && m <= 2) {
+                    return true;
+                    // O를 발견하면 O를 중심으로 다시 탐색
+                } else if (p[nx].charAt(ny) == 'O' && m < 2) {
+                    queue.add(new int[]{nx, ny});
+                }
+            }
+        }
+        return false;
+    }
 }
