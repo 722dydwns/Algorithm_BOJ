@@ -1,32 +1,41 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(long begin, long end) {
+    private static long Limit =  10000000;
+    //약수 중 가장 max 반환
+    public static int getValueMax(int val){
+        if (val == 1) {
+            return 0;
+        }
 
-        int[] answer = new int[(int) (end - begin) + 1];
+        int answer = 1;
 
-        for (int i = 0; i < answer.length; i++) {
-            long num = begin + i;
-
-            //약수 구하기
-            int max_divisor = 1;
-            for (long div = 2; div <= Math.sqrt(num); div++) {
-                if (num % div == 0) {
-                    //최대 10억의 제곱근이므로 약 3만으로, 천만 이하인지 검사X
-                    int divisor1 = (int) div; 
-                    //최대 10억 / 2,  5억이므로 천만이하인지 검사 필요함
-                    int divisor2 = (int) (num / div);
-                    
-                    //가장 큰 약수 찾기
-                    max_divisor = Math.max(max_divisor, divisor1);
-                    if ( divisor2 <= 10000000)
-                        max_divisor = Math.max(max_divisor, divisor2);
+        for (int i = 2; i <= Math.sqrt(val); i++) { 
+            if (val % i == 0) {
+                int expect = val / i;
+                if (expect > Limit) {
+                    answer = i;
+                } else {
+                    answer = expect;
+                    return answer;
                 }
             }
-            answer[i] = max_divisor;
         }
-        if (begin == 1)
-            answer[0] = 0;
+
+        return answer;
+    }
+
+    //솔루션 함수
+    public int[] solution(long begin, long end) {
+        long N = end- begin +1;
+
+        int[] answer = new int[(int) N];
+        // answer[0] = 0; // 필요없어서 삭제
+        //매번 idx+1에 대해서
+        for(int i= (int)begin ; i <= (int) end; i++){
+            answer[i - (int)begin] = getValueMax(i); // answer 인덱스 접근 유의
+        }
+
         return answer;
     }
 }
