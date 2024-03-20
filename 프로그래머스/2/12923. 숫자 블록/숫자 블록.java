@@ -8,7 +8,7 @@ class Solution {
             return 0;
         }
 
-        int answer = 1;
+        int answer = 1; //없으면 기본 1리턴
 
         for (int i = 2; i <= Math.sqrt(val); i++) { 
             if (val % i == 0) {
@@ -30,8 +30,7 @@ class Solution {
         long N = end- begin +1;
 
         int[] answer = new int[(int) N];
-        // answer[0] = 0; // 필요없어서 삭제
-        //매번 idx+1에 대해서
+
         for(int i= (int)begin ; i <= (int) end; i++){
             answer[i - (int)begin] = getValueMax(i); // answer 인덱스 접근 유의
         }
