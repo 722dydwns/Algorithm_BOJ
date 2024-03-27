@@ -4,7 +4,6 @@ class Solution {
     public String solution(String number, int k) {
        
         StringBuilder sb = new StringBuilder();
-
         
         int st = 0;
         
@@ -17,7 +16,7 @@ class Solution {
                 }
             }
             //여기서 max값 이어붙임 
-            sb.append(max);   
+            sb.append(max);
         }
         
         return sb.toString();
