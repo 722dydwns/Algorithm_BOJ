@@ -1,24 +1,21 @@
 import java.util.*;
-
 class Solution {
+    //솔루션 함수 
     public int solution(String[][] clothes) {
         Map<String, Integer> map = new HashMap<>();
         
-        for(String[] x : clothes){
-            String name = x[0];
-            String type = x[1]; //key로 두고
-            
-            map.put(type, map.getOrDefault(type, 0) + 1);
+        for(String [] c : clothes){
+            //종류별로 담음 
+            map.put(c[1], map.getOrDefault(c[1], 0) + 1);
         }
         
         int value = 1;
-        int answer = 0;
         
         for(String key : map.keySet()){
-            value *= (map.get(key) + 1);
+            value *= (map.get(key) + 1);//모두 선택하거나 모두 선택하지 않는 케이스 (1)    
         }
-        answer = value -1;
+        //모두 선택하는 케이스 제외 1개
         
-        return answer;
+        return value - 1;
     }
 }
