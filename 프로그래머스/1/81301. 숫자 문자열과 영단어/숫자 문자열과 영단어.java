@@ -1,27 +1,14 @@
 import java.util.*;
-class Solution {    
-    //솔루션 함수
-    public long solution(String s) {
-        long answer = 0;
+class Solution {
+    public int solution(String s) {
+        int answer = 0;
+        List<String> num = List.of("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine");
         
-        //치환 함수
-        s = s.replaceAll("zero", "0");
-        s = s.replaceAll("one", "1");
-        s = s.replaceAll("two", "2");
-        s = s.replaceAll("three", "3");
-        s = s.replaceAll("four", "4");      
-        s = s.replaceAll("five", "5");
-        s = s.replaceAll("six", "6");
-        s = s.replaceAll("seven", "7");
-        s = s.replaceAll("eight", "8");
-        s = s.replaceAll("nine", "9");
+        for(int i=0; i<num.size(); i++){
+            s = s.replaceAll(num.get(i), String.valueOf(i));
+        }
         
-        answer = Long.parseLong(s);
-        
-        System.out.println(s);
-               
-        
-        
+        answer = Integer.parseInt(s);
         return answer;
     }
 }
